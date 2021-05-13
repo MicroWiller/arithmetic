@@ -1,27 +1,10 @@
-package main
+package stack
 
 import (
-	"fmt"
 	"sync"
 )
 
 // 栈的总结：https://cdn.jsdelivr.net/gh/MicroWiller/photobed@master/StackWithGo.png
-
-func main() {
-	resWithBracket := IsValidWithBracket("()()(())")
-	fmt.Println("resWithBracket: ", resWithBracket)
-	resWithCount := IsValidWithCount("()()(())")
-	fmt.Println("resWithCount: ", resWithCount)
-
-	resWithKinds := IsValidWithKinds("[{}({})]")
-	fmt.Println("resWithKinds: ", resWithKinds)
-
-	size := []int{4, 2, 5, 3, 1}
-	dir := []int{1, 1, 0, 0, 0}
-	fishNum := FishEat(size, dir)
-	fmt.Println("fishNum: ", fishNum)
-
-}
 
 // Size[i] 表示第 i 条鱼的大小，Dir[i] 表示鱼的方向 （0 表示向左游，1 表示向右游）
 // 鱼的行为符合以下几个条件:
@@ -29,7 +12,7 @@ func main() {
 // 2. 当方向相对时，大鱼会吃掉小鱼；
 // 3. 鱼的大小都不一样。
 func FishEat(size, dir []int) int {
-	if size == nil || dir == nil || len(size) != len(dir){
+	if size == nil || dir == nil || len(size) != len(dir) {
 		return -1
 	}
 	left, right := 0, 1
@@ -44,9 +27,9 @@ func FishEat(size, dir []int) int {
 			dir[stack.Peak().(int)] == right &&
 			curFishDir == left {
 			// 当前🐟 > 栈中🐟 ，栈中🐟被吃掉
-			if curFishSize > size[stack.Peak().(int)]{
+			if curFishSize > size[stack.Peak().(int)] {
 				stack.Pop()
-			}else {
+			} else {
 				// 当前🐟 < 栈中🐟 ，当前🐟被吃掉
 				hasEat = true
 				break
@@ -58,9 +41,6 @@ func FishEat(size, dir []int) int {
 	}
 	return stack.len
 }
-
-
-
 
 // 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效
 // 有效字符串需满足：
@@ -117,7 +97,7 @@ func IsValidWithBracket(s string) bool {
 		curChar := s[i]
 		if curChar == '(' {
 			stack.Push(curChar)
-		}else if curChar == ')' {
+		} else if curChar == ')' {
 			if stack.Empty() {
 				return false
 			}
@@ -135,7 +115,7 @@ func IsValidWithCount(s string) bool {
 	for i := 0; i < len(s); i++ {
 		if s[i] == '(' {
 			count++
-		}else if s[i] == ')' {
+		} else if s[i] == ')' {
 			if count < 0 {
 				return false
 			}
@@ -147,20 +127,20 @@ func IsValidWithCount(s string) bool {
 
 type (
 	Stack struct {
-		top *Node
-		len int
+		top  *Node
+		len  int
 		lock *sync.RWMutex
 	}
 	Node struct {
-		prev *Node
+		prev  *Node
 		value interface{}
 	}
 )
 
-func NewStack() *Stack{
+func NewStack() *Stack {
 	return &Stack{
-		top: nil,
-		len: 0,
+		top:  nil,
+		len:  0,
 		lock: &sync.RWMutex{},
 	}
 }

@@ -1,4 +1,4 @@
-package main
+package stack
 
 import (
 	"sync"
@@ -48,7 +48,6 @@ func TestIsValidWithKinds(t *testing.T) {
 	}
 }
 
-
 func TestStack_Push(t *testing.T) {
 	group := sync.WaitGroup{}
 	group.Add(10)
@@ -64,4 +63,3 @@ func TestStack_Push(t *testing.T) {
 		t.Errorf("expect answer is %d, actually get is %d", 10, stack.len)
 	}
 }
-
