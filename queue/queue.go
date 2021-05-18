@@ -36,13 +36,63 @@ func PrintBinaryTree(head *TreeNode) [][]int {
 	return res
 }
 
-type ElementType int
+// 117. 填充每个节点的下一个右侧节点指针 II
+// https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node-ii/
+type Node struct {
+	value             int
+	left, right, next *Node
+}
+
+func Connect(root *Node) *Node {
+	if root == nil {
+		return nil
+	}
+	queue := make([]*Node, 0)
+	queue = append(queue, root)
+	for len(queue) != 0 {
+		size := len(queue)
+		for i := 0; i < size; i++ {
+			curNode := queue[0]
+			// 移除头节点
+			queue = append(queue[:0], queue[1:]...)
+			if i < size-1 {
+				curNode.next = queue[0]
+			}
+			if curNode.left != nil {
+				queue = append(queue, curNode.left)
+			}
+			if curNode.right != nil {
+				queue = append(queue, curNode.right)
+			}
+		}
+	}
+	return root
+}
 
 // 循环队列：
 // index = i 的后一个下标为：(i + 1) % capacity
 // index = i 的前一个下标为：(i - 1 + capacity) % capacity
+type ElementType int
+
+// ![](https://cdn.jsdelivr.net/gh/MicroWiller/photobed@master/CircularQueueByPlus.png)
+type CircularQueueByPlus struct {
+	capacity int
+	front    int
+	rear     int // 指向下个将存储的位置
+	sizes    []ElementType
+}
+
+func NewCircularQueueByPlus(capacity int) *CircularQueueByPlus {
+	return &CircularQueueByPlus{
+		capacity: capacity,
+		front:    0,
+		rear:     0,
+		sizes:    make([]ElementType, capacity+1),
+	}
+}
+
 // 示意图：![](https://cdn.jsdelivr.net/gh/MicroWiller/photobed@master/CircularQueue.png)
-type CircularQueue struct {
+type CircularQueueByUsed struct {
 	capacity int
 	used     int
 	front    int
@@ -50,26 +100,26 @@ type CircularQueue struct {
 	sizes    []ElementType
 }
 
-func NewCircularQueue(capacity int) *CircularQueue {
-	return &CircularQueue{
+func NewCircularQueueByUsed(capacity int) *CircularQueueByUsed {
+	return &CircularQueueByUsed{
 		capacity: capacity,
 		used:     0,
 		front:    0,
 		rear:     0,
-		sizes:    make([]ElementType, 0),
+		sizes:    make([]ElementType, capacity),
 	}
 }
 
-func (c *CircularQueue) IsEmpty() bool {
+func (c *CircularQueueByUsed) IsEmpty() bool {
 	return c.used == 0
 }
 
-func (c *CircularQueue) IsFull() bool {
+func (c *CircularQueueByUsed) IsFull() bool {
 	return c.used == c.capacity
 }
 
 // 将value放到队列，成功返回true
-func (c *CircularQueue) EnQueue(value ElementType) bool {
+func (c *CircularQueueByUsed) EnQueue(value ElementType) bool {
 	if c.IsFull() {
 		return false
 	}
@@ -82,7 +132,7 @@ func (c *CircularQueue) EnQueue(value ElementType) bool {
 }
 
 // 删除队首元素，成功返回true
-func (c *CircularQueue) Dequeue() bool {
+func (c *CircularQueueByUsed) Dequeue() bool {
 	if c.IsEmpty() {
 		return false
 	}
@@ -93,7 +143,7 @@ func (c *CircularQueue) Dequeue() bool {
 }
 
 // 获得队首元素
-func (c *CircularQueue) Front() ElementType {
+func (c *CircularQueueByUsed) Front() ElementType {
 	if c.IsEmpty() {
 		return ElementType(-1)
 	}
@@ -101,7 +151,7 @@ func (c *CircularQueue) Front() ElementType {
 }
 
 // 获得队尾元素
-func (c *CircularQueue) Rear() ElementType {
+func (c *CircularQueueByUsed) Rear() ElementType {
 	if c.IsEmpty() {
 		return ElementType(-1)
 	}
