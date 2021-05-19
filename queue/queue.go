@@ -91,6 +91,47 @@ func NewCircularQueueByPlus(capacity int) *CircularQueueByPlus {
 	}
 }
 
+func (c *CircularQueueByPlus) IsEmpty() bool {
+	return c.front == c.rear
+}
+
+func (c *CircularQueueByPlus) IsFull() bool {
+	return (c.rear+1)%c.capacity == c.front
+}
+
+func (c *CircularQueueByPlus) EnQueue(value ElementType) bool {
+	if c.IsFull() {
+		return false
+	}
+	c.sizes[c.rear] = value
+	c.rear = (c.rear + 1) % c.capacity
+	return true
+}
+
+func (c *CircularQueueByPlus) DeQueue() bool {
+	if c.IsEmpty() {
+		return false
+	}
+	// 出队后，front 往后移
+	c.front = (c.front + 1) % c.capacity
+	return true
+}
+
+func (c *CircularQueueByPlus) Front() ElementType {
+	if c.IsEmpty() {
+		return ElementType(-1)
+	}
+	return c.sizes[c.front]
+}
+
+func (c *CircularQueueByPlus) Rear() ElementType {
+	if c.IsEmpty() {
+		return ElementType(-1)
+	}
+	tail := (c.rear - 1 + c.capacity) % c.capacity
+	return c.sizes[tail]
+}
+
 // 示意图：![](https://cdn.jsdelivr.net/gh/MicroWiller/photobed@master/CircularQueue.png)
 type CircularQueueByUsed struct {
 	capacity int
