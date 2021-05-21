@@ -55,3 +55,8 @@ func MaxSlidingWindow(nums []int, k int) []int {
 	}
 	return res
 }
+
+// 扩展：求滑动窗口最小值
+func MinSlodingWindow(nums []int, k int) []int {
+	return nil
+}
