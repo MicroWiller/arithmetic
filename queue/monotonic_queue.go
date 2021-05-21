@@ -10,12 +10,18 @@ import "container/list"
 
 // MonotonicQueueReduce 非严格单调递减队列
 type MonotonicQueueReduce struct {
-	queue list.List		// 使用双端队列来实现
+	queue *list.List // 使用双端队列来实现
+}
+
+func NewMonotonicQueueReduce() *MonotonicQueueReduce {
+	return &MonotonicQueueReduce{
+		queue: list.New(),
+	}
 }
 
 // Push 后进
 func (m *MonotonicQueueReduce) Push(val int) {
-	if m.queue.Len() != 0 && m.queue.Back().Value.(int) < val {
+	for m.queue.Len() != 0 && m.queue.Back().Value.(int) < val {
 		m.queue.Remove(m.queue.Back())
 	}
 	m.queue.PushBack(val)
@@ -27,9 +33,25 @@ func (m *MonotonicQueueReduce) Pop(val int) {
 		m.queue.Remove(m.queue.Front())
 	}
 }
+
 // 例 3：滑动窗口的最大值
 // 【题目】给定一个数组和滑动窗口的大小，请找出所有滑动窗口里的最大值。
 // 输入：nums = [1,3,-1,-3,5,3], k = 3
 // 输出：[3,3,5,5]
 // [239] 滑动窗口最大值：https://leetcode-cn.com/problems/sliding-window-maximum/description/
-
+func MaxSlidingWindow(nums []int, k int) []int {
+	if nums == nil {
+		return nil
+	}
+	m := NewMonotonicQueueReduce()
+	res := make([]int, 0)
+	for i := 0; i < len(nums); i++ {
+		m.Push(nums[i])
+		if i < k-1 {
+			continue
+		}
+		res = append(res, m.queue.Front().Value.(int))
+		m.Pop(nums[i-k+1])
+	}
+	return res
+}
