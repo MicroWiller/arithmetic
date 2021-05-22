@@ -24,3 +24,13 @@ func TestMinSlidingWindow(t *testing.T) {
 		t.Errorf("Expect: %v, but actually get: %v", expect, res)
 	}
 }
+
+func TestMaxResult(t *testing.T) {
+	nums := []int{1, -1, -100, -1000, 100, 3}
+	k := 2
+	expect := 4
+	res := MaxResult(nums, k)
+	if !reflect.DeepEqual(expect, res) {
+		t.Errorf("Expect: %v, but actually get: %v", expect, res)
+	}
+}

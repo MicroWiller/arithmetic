@@ -1,5 +1,7 @@
 package queue
 
+// 总结：![](https://cdn.jsdelivr.net/gh/MicroWiller/photobed@master/QueueSummary.png)
+
 // 二叉树
 type TreeNode struct {
 	value       int
