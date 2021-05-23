@@ -27,7 +27,7 @@ func (m *MonotonicQueueReduce) Push(val int) {
 	m.queue.PushBack(val)
 }
 
-// Pop 出队时候，相等才出队
+// Pop 移除队头，出队时候，相等才出队
 func (m *MonotonicQueueReduce) Pop(val int) {
 	if m.queue.Len() != 0 && m.queue.Front().Value.(int) == val {
 		m.queue.Remove(m.queue.Front())
@@ -71,6 +71,7 @@ func MinSlidingWindow(nums []int, k int) []int {
 	if nums == nil || len(nums) == 0 {
 		return nil
 	}
+	// 单调递增的队头，是最小值
 	queue := NewMonotonicQueueIncrease()
 	res := make([]int, 0)
 	for i := 0; i < len(nums); i++ {
@@ -90,21 +91,27 @@ type MonotonicQueueIncrease struct {
 	queue *list.List
 }
 
-// 当 val <= 队列的头节点，加入队头
+// Push 前进
 func (m *MonotonicQueueIncrease) Push(val int) {
 	if m.queue.Len() != 0 &&
+		// 当 val <= 队列的头节点，加入队头
 		val > m.queue.Front().Value.(int) {
 		return
 	}
 	m.queue.PushFront(val)
 }
 
-// pop 移除队尾
+// Pop 移除队尾
 func (m *MonotonicQueueIncrease) Pop(val int) {
 	if m.queue.Len() != 0 && m.queue.Back().Value.(int) == val {
 		m.queue.Remove(m.queue.Back())
 	}
 }
+
+func (m *MonotonicQueueIncrease) IsEmpty() bool {
+	return m.queue.Len() == 0
+}
+
 func NewMonotonicQueueIncrease() *MonotonicQueueIncrease {
 	return &MonotonicQueueIncrease{list.New()}
 }
