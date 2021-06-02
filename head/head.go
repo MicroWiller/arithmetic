@@ -1,6 +1,6 @@
 package head
 
-// Element 可以定义成类型，为了方便直接用int
+// Element 可以定义成其他类型/接口，为了方便直接用int
 type Element int
 
 // BigRootHeap ...
@@ -14,13 +14,21 @@ func NewBigRootHeap() *BigRootHeap {
 // todo: 实现堆的 push 和 pop
 
 // Push 添加元素
+// 新元素添加到尾部，并往上浮
 func (h *BigRootHeap) Push(v interface{}) {
-
+	*h = append(*h, v.(Element))
+	h.swim(h.Len() - 1)
 }
 
-// Pop ...
-func (h *BigRootHeap) Pop() {
-
+// Pop 弹出头节点
+func (h *BigRootHeap) Pop() Element {
+	rt := (*h)[0]
+	// 尾元素放到头节点，并下沉
+	(*h)[0] = (*h)[h.Len()-1]
+	// 切片长度
+	*h = (*h)[:h.Len()-1]
+	h.sink(0)
+	return rt
 }
 
 // Len ...
@@ -52,7 +60,7 @@ func (h *BigRootHeap) sink(i int) {
 
 func (h *BigRootHeap) swim(i int) {
 	for {
-		// parant node
+		// parent node
 		j := (i - 1) / 2
 		if j < 0 || j > len(*h) || j == i {
 			break
