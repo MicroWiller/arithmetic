@@ -41,8 +41,8 @@ func (h *BigRootHeap) sink(i int) {
 	for {
 		// left child
 		j := (i << 1) + 1
-		// 校验下标
-		if j > len(*h) || j < 0 {
+		// 校验下标，子节点下标 需要小于总长度，不然会下标越界
+		if j >= len(*h) || j < 0 {
 			break
 		}
 		if j+1 < len(*h) && (*h)[j] < (*h)[j+1] {
@@ -72,4 +72,27 @@ func (h *BigRootHeap) swim(i int) {
 		(*h)[j], (*h)[i] = (*h)[i], (*h)[j]
 		i = j
 	}
+}
+
+// 例 1：最小的 k 个数
+//【题目】给定一个数组 a[]，返回这个数组中最小的 k 个数。
+// https://leetcode-cn.com/problems/zui-xiao-de-kge-shu-lcof/
+// 输入：A = [3,2,1], k = 2
+// 输出：[2, 1]
+func GetLeastNumbers(arr []int, k int) []int {
+	if arr == nil || len(arr) == 0 || k <= 0 {
+		return nil
+	}
+	brh := NewBigRootHeap()
+	for i := 0; i < len(arr); i++ {
+		brh.Push(Element(arr[i]))
+		if brh.Len() > k {
+			brh.Pop()
+		}
+	}
+	res := []int{}
+	for i := 0; i < brh.Len(); i++ {
+		res = append(res, int((*brh)[i]))
+	}
+	return res
 }
