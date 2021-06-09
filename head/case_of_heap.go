@@ -70,3 +70,9 @@ func (h *TopFreqHeap) Pop() (v interface{}) {
 func (h *TopFreqHeap) Push(v interface{}) {
 	*h = append(*h, v.(FreqNode))
 }
+
+// 692. 前K个高频单词：https://leetcode-cn.com/problems/top-k-frequent-words/description/
+// 练习题 2：在练习题1的基础上，给定的是一个单词数组，求这个数组前 k 个高频单词。如果有两个单词出现频率是一样的。那么输出字典序较小的那个单词。
+// 输入：A = ["AA", "BB", "AA", "BB", "CCC", "CCC", "CCC", "AA"] k = 2
+// 输出：["AA", "CCC"]
+// 解释：出现次数最多的 2 个单词就是["AA", "CCC"]
