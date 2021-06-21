@@ -30,3 +30,25 @@ package head
  * 0 i
  * 所有 (ui, vi) 对都 互不相同（即，不含重复边）
  */
+
+const INT_MAX = int(^uint(0) >> 1)
+
+type edge struct {
+	to   int
+	cost int
+}
+
+func networkDelayTime(times [][]int, n, k int) int {
+	if times == nil || len(times) == 0 {
+		return -1
+	}
+	// 封装数据源
+	allEdge := make([][]edge, 0, len(times))
+	for _, time := range times {
+		index := time[0]
+		to := time[1]
+		cost := time[2]
+		allEdge[index] = append(allEdge[index], edge{to: to, cost: cost})
+	}
+	return 0
+}
