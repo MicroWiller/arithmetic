@@ -1,6 +1,8 @@
 package head
 
-import "container/heap"
+import (
+	"container/heap"
+)
 
 /*
  *
