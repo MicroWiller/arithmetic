@@ -32,6 +32,11 @@ package tree
  * 解释: 输入为: [5,1,4,null,null,3,6]。
  * 根节点的值为 5 ，但是其右子节点值为 4 。
  */
+var isBST = true
+
+const IntMax = int(^uint(0) >> 1)
+const IntMin = ^IntMax
+
 func IsValidBST(root *TreeNode) bool {
 	isBST = true
 	isValidBstByPre(root, IntMin, IntMax)
@@ -49,10 +54,26 @@ func isValidBstByPre(root *TreeNode, l, r int) {
 	isValidBstByPre(root.Right, root.Val, r)
 }
 
-var isBST = true
+// IsValidBstIn 中序校验是不是二叉搜索树
+func IsValidBstIn(root *TreeNode) bool {
+	isBST = true
+	preValue := IntMin
+	isValidBstByIn(root, preValue)
+	return isBST
+}
 
-const IntMax = int(^uint(0) >> 1)
-const IntMin = ^IntMax
+func isValidBstByIn(node *TreeNode, preValue int) {
+	if node == nil || !isBST {
+		return
+	}
+	isValidBstByIn(node.Left, preValue)
+	if preValue >= node.Val {
+		isBST = false
+		return
+	}
+	preValue = node.Val
+	isValidBstByIn(node.Right, preValue)
+}
 
 /*
  * [100] 相同的树
