@@ -1,5 +1,9 @@
 package tree
 
+import (
+	"math"
+)
+
 /*
  *
  * [98] 验证二叉搜索树
@@ -185,4 +189,219 @@ func isSame(a *TreeNode, b *TreeNode) bool {
 	return a.Val == b.Val &&
 		isSame(a.Left, b.Left) &&
 		isSame(a.Right, b.Right)
+}
+
+/*
+ * [501] 二叉搜索树中的众数
+ * https://leetcode-cn.com/problems/find-mode-in-binary-search-tree/description/
+ *
+ * 给定一个有相同值的二叉搜索树（BST），找出 BST 中的所有众数（出现频率最高的元素）。
+ *
+ * 假定 BST 有如下定义：
+ * 结点左子树中所含结点的值小于等于当前结点的值
+ * 结点右子树中所含结点的值大于等于当前结点的值
+ * 左子树和右子树都是二叉搜索树
+ *
+ *
+ * 例如：
+ * 给定 BST [1,null,2,2],
+ *
+ *   1
+ *    \
+ *     2
+ *    /
+ *   2
+ * 返回[2].
+ * 提示：如果众数超过1个，不需考虑输出顺序
+ * 进阶：你可以不使用额外的空间吗？（假设由递归产生的隐式调用栈的开销不被计算在内）
+ */
+func findMode(root *TreeNode) []int {
+	if root == nil {
+		return nil
+	}
+	var res []int
+	// 保存最大频类的节点
+	maxFreq := IntMin
+	// 前一个元素的值
+	var preValue int
+	// 前一个元素的计数
+	var preCnt int
+
+	midOrder4FindMode(root, res, maxFreq, preValue, preCnt)
+
+	// ？？不是求最大的频类么？？
+	return res[len(res)-1:]
+}
+
+func midOrder4FindMode(node *TreeNode, res []int, maxFreq int, preValue int, preCnt int) {
+	if node == nil {
+		return
+	}
+	midOrder4FindMode(node.Left, res, maxFreq, preValue, preCnt)
+	if node.Val == preValue {
+		preCnt++
+	} else {
+		preValue = node.Val
+		preCnt = 1
+	}
+	if preCnt == maxFreq {
+		res = append(res, node.Val)
+	}
+	maxFreq = int(math.Max(float64(preCnt), float64(maxFreq)))
+	midOrder4FindMode(node.Right, res, maxFreq, preValue, preCnt)
+}
+
+/*
+	783. 二叉搜索树节点最小距离：
+	https://leetcode-cn.com/problems/minimum-distance-between-bst-nodes/
+
+	给你一个二叉搜索树的根节点 root ，返回 树中任意两不同节点值之间的最小差值 。
+*/
+func minDiffInBST(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	minDst = IntMax
+	preVal = IntMin >> 1
+	findMinDistanceByMidOrder(root)
+	return minDst
+}
+
+var preVal, minDst int
+
+func findMinDistanceByMidOrder(node *TreeNode) {
+	if node == nil {
+		return
+	}
+	findMinDistanceByMidOrder(node.Left)
+	dst := node.Val - preVal
+	if dst < minDst {
+		minDst = dst
+	}
+	preVal = node.Val
+	findMinDistanceByMidOrder(node.Right)
+}
+
+/*
+ * [99] 恢复二叉搜索树
+ * https://leetcode-cn.com/problems/recover-binary-search-tree/description/
+ *
+ * 给你二叉搜索树的根节点 root ，该树中的两个节点被错误地交换。请在不改变其结构的情况下，恢复这棵树。
+ * 进阶：使用 O(n) 空间复杂度的解法很容易实现。你能想出一个只使用常数空间的解决方案吗？
+ *
+ * 示例 1：
+ * 输入：root = [1,3,null,null,2]
+ * 输出：[3,1,null,null,2]
+ * 解释：3 不能是 1 左孩子，因为 3 > 1 。交换 1 和 3 使二叉搜索树有效。
+ *
+ * 示例 2：
+ * 输入：root = [3,1,4,null,null,2]
+ * 输出：[2,1,4,null,null,3]
+ * 解释：2 不能在 3 的右子树中，因为 2 < 3 。交换 2 和 3 使二叉搜索树有效。
+ *
+ * 提示：
+ * 树上节点的数目在范围 [2, 1000] 内
+ * -2^31
+ */
+
+func recoverTree(root *TreeNode) {
+	if root == nil {
+		return
+	}
+	first, second, pre = nil, nil, nil
+	midOrder4RecoverTree(root)
+	if first != nil && second != nil {
+		first.Val, second.Val = second.Val, first.Val
+	}
+}
+
+var first, second, pre *TreeNode
+
+func midOrder4RecoverTree(node *TreeNode) {
+	if node == nil {
+		return
+	}
+	midOrder4RecoverTree(node.Left)
+	if pre != nil && pre.Val > node.Val {
+		if first == nil {
+			first = pre
+		}
+		second = node
+	}
+	pre = node
+	midOrder4RecoverTree(node.Right)
+}
+
+/*
+ * [450] 删除二叉搜索树中的节点
+ * https://leetcode-cn.com/problems/delete-node-in-a-bst/description/
+ * https://www.lintcode.com/zh-cn/problem/remove-node-in-binary-search-tree/
+ *
+ * 给定一个二叉搜索树的根节点 root 和一个值 key，删除二叉搜索树中的 key
+ * 对应的节点，并保证二叉搜索树的性质不变。返回二叉搜索树（有可能被更新）的根节点的引用。
+ *
+ * 一般来说，删除节点可分为两个步骤：
+ * 首先找到需要删除的节点；
+ * 如果找到了，删除它。
+ *
+ * 说明： 要求算法时间复杂度为 O(h)，h 为树的高度。
+ *
+ * 示例:
+ * root = [5,3,6,2,4,null,7]
+ * key = 3
+ *
+ *    5
+ *   / \
+ *  3   6
+ * / \   \
+ *2   4   7
+ *
+ * 给定需要删除的节点值是 3，所以我们首先找到 3 这个节点，然后删除它。
+ * 一个正确的答案是 [5,4,6,2,null,null,7], 如下图所示。
+ *
+ *    5
+ *   / \
+ *  4   6
+ * /     \
+ *2       7
+ * 另一个正确答案是 [5,2,6,null,4,null,7]。
+ *
+ *    5
+ *   / \
+ *  2   6
+ *   \   \
+ *    4   7
+ */
+func deleteNode(root *TreeNode, key int) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if key < root.Val {
+		root.Left = deleteNode(root.Left, key)
+	} else if key > root.Val {
+		root.Right = deleteNode(root.Right, key)
+	} else {
+		// 找到待删除节点
+		// 判断待删除节点，为叶子节点，还是非叶子节点
+		if root.Left == nil && root.Right == nil { // 叶子节点，直接返回nil，使其上一层的Left/Right为nil
+			return nil
+		} else if root.Left != nil { // 非叶子节点，判断左右哪个树枝不为null
+			// 找到左边最大值，交换，删除
+			leftMax := root.Left
+			for leftMax.Right != nil {
+				leftMax = leftMax.Right
+			}
+			root.Val, leftMax.Val = leftMax.Val, root.Val
+			root.Left = deleteNode(root.Left, key)
+		} else if root.Right != nil {
+			// 找到右边最小，交换，删除
+			rightMin := root.Right
+			for rightMin.Left != nil {
+				rightMin = rightMin.Left
+			}
+			root.Val, rightMin.Val = rightMin.Val, root.Val
+			root.Right = deleteNode(root.Right, key)
+		}
+	}
+	return root
 }
